@@ -1,4 +1,5 @@
 import { createGlobalStyle } from "styled-components";
+import ToDoList from "./components/ToDoList";
 
 const GlobalStyle = createGlobalStyle`
   html, body, div, span, applet, object, iframe,
@@ -53,7 +54,7 @@ const GlobalStyle = createGlobalStyle`
   }
   body {
     font-family: "Nanum Pen Script", sans-serif;
-    font-size: 30px;
+    font-size: 25px;
     color: ${(props) => props.theme.textColor};
     background-color: ${(props) => props.theme.bgColor};
   }
@@ -67,6 +68,7 @@ function App() {
   return (
     <>
       <GlobalStyle />
+      <ToDoList />
     </>
   );
 }
