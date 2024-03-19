@@ -1,7 +1,12 @@
 import { atom, selector } from "recoil";
 
-export const isDarkAtom = atom({
+export const isDarkAtom = atom<boolean>({
   key: "isDark",
+  default: false,
+});
+
+export const modalState = atom<boolean>({
+  key: "open",
   default: false,
 });
 

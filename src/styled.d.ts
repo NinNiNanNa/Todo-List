@@ -6,5 +6,7 @@ declare module "styled-components" {
     textColor: string;
     cardBgColor: string;
     warningColor: string;
+    modalBgColor: string;
+    modalTextColor: string;
   }
 }

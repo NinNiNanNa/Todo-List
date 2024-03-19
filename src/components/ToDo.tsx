@@ -9,6 +9,7 @@ const ToDoText = styled.div`
   button {
     padding: 10px;
     display: flex;
+    z-index: 1;
     position: absolute;
     top: -10px;
     right: -10px;

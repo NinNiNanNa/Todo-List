@@ -71,7 +71,7 @@ function CreateToDo() {
             maxLength: { value: 20, message: "20자 이하로 입력해주세요." },
           })}
           type="text"
-          placeholder={`todo를 입력해주세요.`}
+          placeholder={`"${category}" 에 내용을 추가해보세요.`}
         />
         <button>
           <FaPlus />

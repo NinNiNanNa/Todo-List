@@ -8,15 +8,19 @@ import {
   categoriesState,
   categoryState,
   isDarkAtom,
+  modalState,
   toDoSelector,
 } from "../atoms";
 import ToDo from "./ToDo";
 import CreateToDo from "./CreateToDo";
+import Modal from "./Modal";
+import { useRef } from "react";
 
 const ThemeBtn = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+  z-index: 3;
   position: fixed;
   left: 20px;
   bottom: 20px;
@@ -32,6 +36,7 @@ const ThemeBtn = styled.div`
 const Wrapper = styled.div`
   margin: 0 auto;
   padding: 0 20px;
+  position: relative;
   max-width: 500px;
 `;
 const Title = styled.h1`
@@ -80,6 +85,17 @@ const ToDoWrap = styled.ul`
   }
 `;
 
+const ModalWrapper = styled.div`
+  display: flex;
+  justify-content: center;
+  z-index: 2;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+`;
+
 function ToDoList() {
   const setIsDark = useSetRecoilState(isDarkAtom);
   const toggleDarkAtom = () => setIsDark((preveMode) => !preveMode);
@@ -89,8 +105,15 @@ function ToDoList() {
 
   const [categoris, setCategories] = useRecoilState(categoriesState);
 
+  const [open, setOpen] = useRecoilState(modalState);
+  const modalBackground = useRef<HTMLDivElement>(null);
+
   const onClick = (category: IToDo["category"]) => {
     setCategory(category);
+  };
+
+  const addCategory = () => {
+    setOpen(true);
   };
 
   return (
@@ -112,7 +135,7 @@ function ToDoList() {
             </Menu>
           ))}
           <Menu>
-            <button>
+            <button onClick={addCategory}>
               <LuListPlus />
             </button>
           </Menu>
@@ -126,6 +149,19 @@ function ToDoList() {
           ))}
         </ToDoWrap>
       </Wrapper>
+
+      {open && (
+        <ModalWrapper
+          ref={modalBackground}
+          onClick={(e) => {
+            if (e.target === modalBackground.current) {
+              setOpen(false);
+            }
+          }}
+        >
+          <Modal />
+        </ModalWrapper>
+      )}
     </>
   );
 }
