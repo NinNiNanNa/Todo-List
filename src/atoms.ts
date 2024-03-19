@@ -1,8 +1,12 @@
 import { atom, selector } from "recoil";
+import { recoilPersist } from "recoil-persist";
+
+const { persistAtom } = recoilPersist();
 
 export const isDarkAtom = atom<boolean>({
   key: "isDark",
   default: false,
+  effects_UNSTABLE: [persistAtom],
 });
 
 export const modalState = atom<boolean>({
@@ -19,6 +23,7 @@ export interface IToDo {
 export const categoriesState = atom<string[]>({
   key: "categories",
   default: ["대기", "진행", "완료"],
+  effects_UNSTABLE: [persistAtom],
 });
 
 export const selectedCategoryState = atom<string>({
@@ -29,6 +34,7 @@ export const selectedCategoryState = atom<string>({
 export const toDoState = atom<IToDo[]>({
   key: "toDo",
   default: [],
+  effects_UNSTABLE: [persistAtom],
 });
 
 export const toDoSelector = selector({
