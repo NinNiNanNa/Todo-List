@@ -2,13 +2,33 @@ import styled from "styled-components";
 import { LuListPlus } from "react-icons/lu";
 import { FaPlus } from "react-icons/fa6";
 import { FiMinusCircle } from "react-icons/fi";
+import { MdSunny } from "react-icons/md";
+import { PiMoonFill } from "react-icons/pi";
+import { useSetRecoilState } from "recoil";
+import { isDarkAtom } from "../atoms";
+
+const ThemeBtn = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: fixed;
+  left: 20px;
+  bottom: 20px;
+  width: 50px;
+  height: 50px;
+  border-radius: 50px;
+  background-color: ${(props) => props.theme.cardBgColor};
+  box-shadow: 0 4px 4px rgba(0, 0, 0, 0.1);
+  color: #128e51;
+  cursor: pointer;
+`;
 
 const Wrapper = styled.div`
   margin: 0 auto;
   padding: 0 20px;
   max-width: 500px;
 `;
-const Title = styled.div`
+const Title = styled.h1`
   padding: 30px 0;
   text-align: center;
   font-size: 50px;
@@ -76,20 +96,20 @@ const ToDoWrap = styled.ul`
     padding: 20px;
     border-radius: 10px;
     background-color: ${(props) => props.theme.cardBgColor};
-    box-shadow: 0 3px 3px rgba(10, 10, 10, 0.1);
+    box-shadow: 0 3px 3px rgba(0, 0, 0, 0.1);
   }
 `;
 const ToDoText = styled.div`
   display: flex;
   position: relative;
   button {
-    padding: 12px;
+    padding: 10px;
     display: flex;
     position: absolute;
     top: -10px;
     right: -10px;
-    font-size: 20px;
-    color: red;
+    font-size: 25px;
+    color: #b60000;
     border: none;
     background-color: transparent;
     cursor: pointer;
@@ -114,42 +134,49 @@ const ToDoMenus = styled.div`
 `;
 
 function ToDoList() {
+  const setIsDark = useSetRecoilState(isDarkAtom);
+  const toggleDarkAtom = () => setIsDark((preveMode) => !preveMode);
   return (
-    <Wrapper>
-      <Title>TODO LIST</Title>
-      <MenuWrap>
-        {/* <Menu /> */}
-        <Menu>대기</Menu>
-        <Menu>진행</Menu>
-        <Menu>완료</Menu>
-        <Menu>
-          <LuListPlus />
-        </Menu>
-      </MenuWrap>
-      <InputWrap>
-        <form>
-          <input type="text" placeholder={`todo를 입력해주세요.`} />
-          <button>
-            <FaPlus />
-          </button>
-        </form>
-      </InputWrap>
-      <ToDoWrap>
-        <li>
-          <ToDoText>
-            투두리스트 만들기
+    <>
+      <ThemeBtn onClick={toggleDarkAtom}>
+        <PiMoonFill />
+      </ThemeBtn>
+      <Wrapper>
+        <Title>TODO LIST</Title>
+        <MenuWrap>
+          {/* <Menu /> */}
+          <Menu>대기</Menu>
+          <Menu>진행</Menu>
+          <Menu>완료</Menu>
+          <Menu>
+            <LuListPlus />
+          </Menu>
+        </MenuWrap>
+        <InputWrap>
+          <form>
+            <input type="text" placeholder={`todo를 입력해주세요.`} />
             <button>
-              <FiMinusCircle />
+              <FaPlus />
             </button>
-          </ToDoText>
-          <ToDoMenus>
-            <button>대기</button>
-            <button>진행</button>
-            <button>완료</button>
-          </ToDoMenus>
-        </li>
-      </ToDoWrap>
-    </Wrapper>
+          </form>
+        </InputWrap>
+        <ToDoWrap>
+          <li>
+            <ToDoText>
+              투두리스트 만들기
+              <button>
+                <FiMinusCircle />
+              </button>
+            </ToDoText>
+            <ToDoMenus>
+              <button>대기</button>
+              <button>진행</button>
+              <button>완료</button>
+            </ToDoMenus>
+          </li>
+        </ToDoWrap>
+      </Wrapper>
+    </>
   );
 }
 
