@@ -4,8 +4,9 @@ import { FaPlus } from "react-icons/fa6";
 import { FiMinusCircle } from "react-icons/fi";
 import { MdSunny } from "react-icons/md";
 import { PiMoonFill } from "react-icons/pi";
-import { useSetRecoilState } from "recoil";
+import { atom, useRecoilState, useSetRecoilState } from "recoil";
 import { isDarkAtom } from "../atoms";
+import { useForm } from "react-hook-form";
 
 const ThemeBtn = styled.div`
   display: flex;
@@ -88,6 +89,12 @@ const InputWrap = styled.div`
     border: none;
     cursor: pointer;
   }
+  span {
+    margin-left: 20px;
+    font-family: sans-serif;
+    font-size: 13px;
+    color: ${(props) => props.theme.warningColor};
+  }
 `;
 
 const ToDoWrap = styled.ul`
@@ -109,7 +116,7 @@ const ToDoText = styled.div`
     top: -10px;
     right: -10px;
     font-size: 25px;
-    color: #b60000;
+    color: ${(props) => props.theme.warningColor};
     border: none;
     background-color: transparent;
     cursor: pointer;
@@ -133,9 +140,41 @@ const ToDoMenus = styled.div`
   }
 `;
 
+interface IForm {
+  toDo: string;
+}
+
+interface IToDo {
+  text: string;
+  id: number;
+  category: "TO_DO" | "DOING" | "DONE";
+}
+
+const toDoState = atom<IToDo[]>({
+  key: "toDo",
+  default: [],
+});
+
 function ToDoList() {
   const setIsDark = useSetRecoilState(isDarkAtom);
   const toggleDarkAtom = () => setIsDark((preveMode) => !preveMode);
+
+  const [toDos, setToDos] = useRecoilState(toDoState);
+  const {
+    register,
+    setValue,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<IForm>();
+  const handleValid = ({ toDo }: IForm) => {
+    setToDos((oldToDos) => [
+      { text: toDo, id: Date.now(), category: "TO_DO" },
+      ...oldToDos,
+    ]);
+    setValue("toDo", "");
+  };
+  console.log(toDos);
+
   return (
     <>
       <ThemeBtn onClick={toggleDarkAtom}>
@@ -153,27 +192,34 @@ function ToDoList() {
           </Menu>
         </MenuWrap>
         <InputWrap>
-          <form>
-            <input type="text" placeholder={`todo를 입력해주세요.`} />
+          <form onSubmit={handleSubmit(handleValid)}>
+            <input
+              {...register("toDo", { required: "내용을 입력해주세요." })}
+              type="text"
+              placeholder={`todo를 입력해주세요.`}
+            />
             <button>
               <FaPlus />
             </button>
+            <span>{errors.toDo?.message}</span>
           </form>
         </InputWrap>
         <ToDoWrap>
-          <li>
-            <ToDoText>
-              투두리스트 만들기
-              <button>
-                <FiMinusCircle />
-              </button>
-            </ToDoText>
-            <ToDoMenus>
-              <button>대기</button>
-              <button>진행</button>
-              <button>완료</button>
-            </ToDoMenus>
-          </li>
+          {toDos.map((toDo) => (
+            <li key={toDo.id}>
+              <ToDoText>
+                {toDo.text}
+                <button>
+                  <FiMinusCircle />
+                </button>
+              </ToDoText>
+              <ToDoMenus>
+                <button>대기</button>
+                <button>진행</button>
+                <button>완료</button>
+              </ToDoMenus>
+            </li>
+          ))}
         </ToDoWrap>
       </Wrapper>
     </>
