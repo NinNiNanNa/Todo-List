@@ -2,8 +2,14 @@ import styled from "styled-components";
 import { LuListPlus } from "react-icons/lu";
 import { MdSunny } from "react-icons/md";
 import { PiMoonFill } from "react-icons/pi";
-import { useRecoilState, useSetRecoilState } from "recoil";
-import { isDarkAtom, toDoState } from "../atoms";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
+import {
+  IToDo,
+  categoriesState,
+  categoryState,
+  isDarkAtom,
+  toDoSelector,
+} from "../atoms";
 import ToDo from "./ToDo";
 import CreateToDo from "./CreateToDo";
 
@@ -41,19 +47,25 @@ const MenuWrap = styled.ul`
   gap: 20px;
 `;
 const Menu = styled.li`
-  padding: 5px 0;
-  text-align: center;
-  background-color: ${(props) => props.theme.cardBgColor};
-  border: 3px solid ${(props) => props.theme.cardBgColor};
-  border-radius: 10px;
-  cursor: pointer;
-  /* 선택된 메뉴 모습(임시) */
-  &:first-child {
-    background-color: rgba(18, 142, 81, 0.1);
-    border: 3px solid #128e51;
-    color: #128e51;
+  button {
+    padding: 5px 0;
+    width: 100%;
+    text-align: center;
+    background-color: ${(props) => props.theme.cardBgColor};
+    border: 3px solid ${(props) => props.theme.cardBgColor};
+    border-radius: 10px;
+    font-family: "Nanum Pen Script";
+    font-size: 25px;
+    color: ${(props) => props.theme.textColor};
+    cursor: pointer;
+    &:disabled {
+      background-color: rgba(18, 142, 81, 0.1);
+      border: 3px solid #128e51;
+      color: #128e51;
+      cursor: auto;
+    }
   }
-  &:last-child {
+  &:last-child button {
     color: #128e51;
   }
 `;
@@ -72,7 +84,15 @@ function ToDoList() {
   const setIsDark = useSetRecoilState(isDarkAtom);
   const toggleDarkAtom = () => setIsDark((preveMode) => !preveMode);
 
-  const [toDos, setToDos] = useRecoilState(toDoState);
+  const toDos = useRecoilValue(toDoSelector);
+  const [category, setCategory] = useRecoilState(categoryState);
+
+  const [categoris, setCategories] = useRecoilState(categoriesState);
+
+  const onClick = (category: IToDo["category"]) => {
+    setCategory(category);
+  };
+
   return (
     <>
       <ThemeBtn onClick={toggleDarkAtom}>
@@ -81,12 +101,20 @@ function ToDoList() {
       <Wrapper>
         <Title>TODO LIST</Title>
         <MenuWrap>
-          {/* <Menu /> */}
-          <Menu>대기</Menu>
-          <Menu>진행</Menu>
-          <Menu>완료</Menu>
+          {categoris.map((availableCategory) => (
+            <Menu key={availableCategory}>
+              <button
+                onClick={() => onClick(availableCategory)}
+                disabled={availableCategory === category}
+              >
+                {availableCategory}
+              </button>
+            </Menu>
+          ))}
           <Menu>
-            <LuListPlus />
+            <button>
+              <LuListPlus />
+            </button>
           </Menu>
         </MenuWrap>
 

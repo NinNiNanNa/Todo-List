@@ -1,6 +1,7 @@
 import styled from "styled-components";
 import { FiMinusCircle } from "react-icons/fi";
-import { IToDo } from "../atoms";
+import { IToDo, categoriesState, toDoState } from "../atoms";
+import { useRecoilValue, useSetRecoilState } from "recoil";
 
 const ToDoText = styled.div`
   display: flex;
@@ -33,10 +34,29 @@ const ToDoMenus = styled.div`
     &:hover {
       background-color: #dcdcdc;
     }
+    &:disabled {
+      cursor: auto;
+    }
   }
 `;
 
-function ToDo({ text }: IToDo) {
+function ToDo({ text, id, category }: IToDo) {
+  const setToDos = useSetRecoilState(toDoState);
+  const categories = useRecoilValue(categoriesState);
+  const onClick = (newCategory: IToDo["category"]) => {
+    setToDos((oldToDos) => {
+      const targetIndex = oldToDos.findIndex((toDo) => toDo.id === id);
+      const oldToDo = oldToDos[targetIndex];
+      const newToDo = { text, id, category: newCategory };
+      console.log(oldToDo, newToDo);
+
+      return [
+        ...oldToDos.slice(0, targetIndex),
+        newToDo,
+        ...oldToDos.slice(targetIndex + 1),
+      ];
+    });
+  };
   return (
     <li>
       <ToDoText>
@@ -46,9 +66,15 @@ function ToDo({ text }: IToDo) {
         </button>
       </ToDoText>
       <ToDoMenus>
-        <button>대기</button>
-        <button>진행</button>
-        <button>완료</button>
+        {Object.values(categories).map((availableCategory) => (
+          <button
+            key={availableCategory}
+            onClick={() => onClick(availableCategory)}
+            disabled={availableCategory === category}
+          >
+            {availableCategory}
+          </button>
+        ))}
       </ToDoMenus>
     </li>
   );
