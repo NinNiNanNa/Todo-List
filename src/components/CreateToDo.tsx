@@ -18,6 +18,7 @@ const InputWrap = styled.div`
     background-color: ${(props) => props.theme.cardBgColor};
     box-shadow: 0 3px 3px rgba(10, 10, 10, 0.1);
     font-size: 15px;
+    color: ${(props) => props.theme.textColor};
     &:focus {
       border: 3px solid #128e51;
     }

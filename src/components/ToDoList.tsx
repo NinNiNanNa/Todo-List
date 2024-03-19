@@ -1,20 +1,13 @@
 import styled from "styled-components";
-import { LuListPlus } from "react-icons/lu";
 import { MdSunny } from "react-icons/md";
 import { PiMoonFill } from "react-icons/pi";
-import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
-import {
-  IToDo,
-  categoriesState,
-  selectedCategoryState,
-  isDarkAtom,
-  modalState,
-  toDoSelector,
-} from "../atoms";
+import { useRecoilState, useRecoilValue } from "recoil";
+import { isDarkAtom, modalState, toDoSelector } from "../atoms";
 import ToDo from "./ToDo";
 import CreateToDo from "./CreateToDo";
 import Modal from "./Modal";
 import { useRef } from "react";
+import CategoryBtns from "./CategoryBtns";
 
 const ThemeBtn = styled.div`
   display: flex;
@@ -46,34 +39,6 @@ const Title = styled.h1`
   font-weight: bold;
   color: #128e51;
 `;
-const MenuWrap = styled.ul`
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(20%, auto));
-  gap: 20px;
-`;
-const Menu = styled.li`
-  button {
-    padding: 5px 0;
-    width: 100%;
-    text-align: center;
-    background-color: ${(props) => props.theme.cardBgColor};
-    border: 3px solid ${(props) => props.theme.cardBgColor};
-    border-radius: 10px;
-    font-family: "Nanum Pen Script";
-    font-size: 25px;
-    color: ${(props) => props.theme.textColor};
-    cursor: pointer;
-    &:disabled {
-      background-color: rgba(18, 142, 81, 0.1);
-      border: 3px solid #128e51;
-      color: #128e51;
-      cursor: auto;
-    }
-  }
-  &:last-child button {
-    color: #128e51;
-  }
-`;
 
 const ToDoWrap = styled.ul`
   li {
@@ -97,49 +62,20 @@ const ModalWrapper = styled.div`
 `;
 
 function ToDoList() {
-  const setIsDark = useSetRecoilState(isDarkAtom);
+  const [isDark, setIsDark] = useRecoilState(isDarkAtom);
   const toggleDarkAtom = () => setIsDark((preveMode) => !preveMode);
-
   const toDos = useRecoilValue(toDoSelector);
-  const [category, setCategory] = useRecoilState(selectedCategoryState);
-
-  const [categoris, setCategories] = useRecoilState(categoriesState);
-
   const [open, setOpen] = useRecoilState(modalState);
   const modalBackground = useRef<HTMLDivElement>(null);
-
-  const onClick = (category: IToDo["category"]) => {
-    setCategory(category);
-  };
-
-  const addCategory = () => {
-    setOpen(true);
-  };
-
   return (
     <>
       <ThemeBtn onClick={toggleDarkAtom}>
-        <PiMoonFill />
+        {isDark ? <MdSunny /> : <PiMoonFill />}
       </ThemeBtn>
       <Wrapper>
         <Title>TODO LIST</Title>
-        <MenuWrap>
-          {categoris.map((availableCategory) => (
-            <Menu key={availableCategory}>
-              <button
-                onClick={() => onClick(availableCategory)}
-                disabled={availableCategory === category}
-              >
-                {availableCategory}
-              </button>
-            </Menu>
-          ))}
-          <Menu>
-            <button onClick={addCategory}>
-              <LuListPlus />
-            </button>
-          </Menu>
-        </MenuWrap>
+
+        <CategoryBtns />
 
         <CreateToDo />
 

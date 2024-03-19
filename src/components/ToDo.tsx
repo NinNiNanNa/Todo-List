@@ -58,11 +58,22 @@ function ToDo({ text, id, category }: IToDo) {
       ];
     });
   };
+  const deleteToDo = (toDo: IToDo["text"]) => {
+    if (window.confirm(`${toDo} 를(을) 정말 삭제하시겠습니까?`)) {
+      setToDos((oldToDos) => {
+        const targetIndex = oldToDos.findIndex((toDo) => toDo.id === id);
+        return [
+          ...oldToDos.slice(0, targetIndex),
+          ...oldToDos.slice(targetIndex + 1),
+        ];
+      });
+    }
+  };
   return (
     <li>
       <ToDoText>
         {text}
-        <button>
+        <button onClick={() => deleteToDo(text)}>
           <FiMinusCircle />
         </button>
       </ToDoText>
