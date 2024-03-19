@@ -1,13 +1,14 @@
 import styled from "styled-components";
 import { IoClose } from "react-icons/io5";
-import { useSetRecoilState } from "recoil";
-import { modalState } from "../atoms";
+import { useRecoilState, useSetRecoilState } from "recoil";
+import { categoriesState, modalState, selectedCategoryState } from "../atoms";
+import { useForm } from "react-hook-form";
 
 const ModalContainer = styled.div`
   margin: 40px 20px 0;
   width: 100%;
   max-width: 500px;
-  height: 200px;
+  height: 220px;
   border: 3px solid ${(props) => props.theme.modalTextColor};
   border-radius: 15px;
   background-color: ${(props) => props.theme.modalBgColor};
@@ -33,7 +34,7 @@ const ModalHeader = styled.div`
 `;
 const ModalBody = styled.div`
   padding: 20px;
-  span {
+  span:first-child {
     margin-bottom: 20px;
     display: block;
     text-align: center;
@@ -52,10 +53,38 @@ const ModalBody = styled.div`
       border: 3px solid #128e51;
     }
   }
+  span:last-child {
+    margin-left: 20px;
+    font-family: sans-serif;
+    font-size: 13px;
+    color: ${(props) => props.theme.warningColor};
+  }
 `;
+
+interface IForm {
+  newCategory: string;
+}
 
 function Modal() {
   const setOpen = useSetRecoilState(modalState);
+  const [categories, setCategories] = useRecoilState(categoriesState);
+  const setCategory = useSetRecoilState(selectedCategoryState);
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    formState: { errors },
+  } = useForm<IForm>();
+  const handleValid = ({ newCategory }: IForm) => {
+    if (categories.includes(newCategory)) {
+      window.alert("이미 존재하는 카테고리 이름입니다.");
+      setValue("newCategory", "");
+    } else {
+      setCategories((oldCategories) => [...oldCategories, newCategory]);
+      setCategory(newCategory);
+      setOpen(false);
+    }
+  };
   return (
     <ModalContainer>
       <ModalHeader>
@@ -66,12 +95,17 @@ function Modal() {
       </ModalHeader>
       <ModalBody>
         <span>새로운 카테고리의 이름을 입력해주세요.</span>
-        <form>
+        <form onSubmit={handleSubmit(handleValid)}>
           <input
+            {...register("newCategory", {
+              required: "내용을 입력해주세요.",
+              maxLength: { value: 10, message: "10자 이하로 입력해주세요." },
+            })}
             type="text"
-            placeholder='내용을 입력하고 "Enter"를 눌러주세요.'
+            placeholder='내용을 입력하고 "Enter"를 누르세요.'
           />
         </form>
+        <span>{errors.newCategory?.message}</span>
       </ModalBody>
     </ModalContainer>
   );

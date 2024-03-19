@@ -6,7 +6,7 @@ import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import {
   IToDo,
   categoriesState,
-  categoryState,
+  selectedCategoryState,
   isDarkAtom,
   modalState,
   toDoSelector,
@@ -101,7 +101,7 @@ function ToDoList() {
   const toggleDarkAtom = () => setIsDark((preveMode) => !preveMode);
 
   const toDos = useRecoilValue(toDoSelector);
-  const [category, setCategory] = useRecoilState(categoryState);
+  const [category, setCategory] = useRecoilState(selectedCategoryState);
 
   const [categoris, setCategories] = useRecoilState(categoriesState);
 

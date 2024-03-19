@@ -10,8 +10,6 @@ export const modalState = atom<boolean>({
   default: false,
 });
 
-export const defaultCategories = ["대기", "진행", "완료"];
-
 export interface IToDo {
   text: string;
   id: number;
@@ -20,12 +18,12 @@ export interface IToDo {
 
 export const categoriesState = atom<string[]>({
   key: "categories",
-  default: defaultCategories,
+  default: ["대기", "진행", "완료"],
 });
 
-export const categoryState = atom<string>({
+export const selectedCategoryState = atom<string>({
   key: "category",
-  default: defaultCategories[0],
+  default: "대기",
 });
 
 export const toDoState = atom<IToDo[]>({
@@ -37,7 +35,7 @@ export const toDoSelector = selector({
   key: "toDoSelector",
   get: ({ get }) => {
     const toDos = get(toDoState);
-    const category = get(categoryState);
+    const category = get(selectedCategoryState);
 
     return toDos.filter((toDo) => toDo.category === category);
   },

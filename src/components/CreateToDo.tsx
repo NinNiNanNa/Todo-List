@@ -2,7 +2,7 @@ import { useForm } from "react-hook-form";
 import styled from "styled-components";
 import { FaPlus } from "react-icons/fa6";
 import { useRecoilValue, useSetRecoilState } from "recoil";
-import { IToDo, categoryState, toDoState } from "../atoms";
+import { selectedCategoryState, toDoState } from "../atoms";
 
 const InputWrap = styled.div`
   margin: 30px 0 20px;
@@ -48,7 +48,7 @@ interface IForm {
 
 function CreateToDo() {
   const setToDos = useSetRecoilState(toDoState);
-  const category = useRecoilValue(categoryState);
+  const category = useRecoilValue(selectedCategoryState);
   const {
     register,
     handleSubmit,
