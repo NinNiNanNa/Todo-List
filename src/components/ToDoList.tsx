@@ -1,12 +1,11 @@
 import styled from "styled-components";
 import { LuListPlus } from "react-icons/lu";
-import { FaPlus } from "react-icons/fa6";
-import { FiMinusCircle } from "react-icons/fi";
 import { MdSunny } from "react-icons/md";
 import { PiMoonFill } from "react-icons/pi";
-import { atom, useRecoilState, useSetRecoilState } from "recoil";
-import { isDarkAtom } from "../atoms";
-import { useForm } from "react-hook-form";
+import { useRecoilState, useSetRecoilState } from "recoil";
+import { isDarkAtom, toDoState } from "../atoms";
+import ToDo from "./ToDo";
+import CreateToDo from "./CreateToDo";
 
 const ThemeBtn = styled.div`
   display: flex;
@@ -59,44 +58,6 @@ const Menu = styled.li`
   }
 `;
 
-const InputWrap = styled.div`
-  margin: 30px 0 20px;
-  position: relative;
-
-  input {
-    padding: 0 20px;
-    width: 100%;
-    height: 48px;
-    outline: none;
-    border: 3px solid transparent;
-    border-radius: 10px;
-    background-color: ${(props) => props.theme.cardBgColor};
-    box-shadow: 0 3px 3px rgba(10, 10, 10, 0.1);
-    font-size: 15px;
-    &:focus {
-      border: 3px solid #128e51;
-    }
-  }
-  button {
-    padding: 12px 20px;
-    position: absolute;
-    top: 0;
-    right: 0;
-    display: flex;
-    font-size: 25px;
-    color: #128e51;
-    background-color: transparent;
-    border: none;
-    cursor: pointer;
-  }
-  span {
-    margin-left: 20px;
-    font-family: sans-serif;
-    font-size: 13px;
-    color: ${(props) => props.theme.warningColor};
-  }
-`;
-
 const ToDoWrap = styled.ul`
   li {
     margin-bottom: 15px;
@@ -106,75 +67,12 @@ const ToDoWrap = styled.ul`
     box-shadow: 0 3px 3px rgba(0, 0, 0, 0.1);
   }
 `;
-const ToDoText = styled.div`
-  display: flex;
-  position: relative;
-  button {
-    padding: 10px;
-    display: flex;
-    position: absolute;
-    top: -10px;
-    right: -10px;
-    font-size: 25px;
-    color: ${(props) => props.theme.warningColor};
-    border: none;
-    background-color: transparent;
-    cursor: pointer;
-  }
-`;
-const ToDoMenus = styled.div`
-  margin-top: 15px;
-  display: flex;
-  flex-flow: wrap;
-  gap: 10px;
-  button {
-    padding: 5px 10px;
-    border: none;
-    border-radius: 5px;
-    background-color: #f5efda;
-    cursor: pointer;
-    transition: background-color 0.3s;
-    &:hover {
-      background-color: #dcdcdc;
-    }
-  }
-`;
-
-interface IForm {
-  toDo: string;
-}
-
-interface IToDo {
-  text: string;
-  id: number;
-  category: "TO_DO" | "DOING" | "DONE";
-}
-
-const toDoState = atom<IToDo[]>({
-  key: "toDo",
-  default: [],
-});
 
 function ToDoList() {
   const setIsDark = useSetRecoilState(isDarkAtom);
   const toggleDarkAtom = () => setIsDark((preveMode) => !preveMode);
 
   const [toDos, setToDos] = useRecoilState(toDoState);
-  const {
-    register,
-    setValue,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<IForm>();
-  const handleValid = ({ toDo }: IForm) => {
-    setToDos((oldToDos) => [
-      { text: toDo, id: Date.now(), category: "TO_DO" },
-      ...oldToDos,
-    ]);
-    setValue("toDo", "");
-  };
-  console.log(toDos);
-
   return (
     <>
       <ThemeBtn onClick={toggleDarkAtom}>
@@ -191,34 +89,12 @@ function ToDoList() {
             <LuListPlus />
           </Menu>
         </MenuWrap>
-        <InputWrap>
-          <form onSubmit={handleSubmit(handleValid)}>
-            <input
-              {...register("toDo", { required: "내용을 입력해주세요." })}
-              type="text"
-              placeholder={`todo를 입력해주세요.`}
-            />
-            <button>
-              <FaPlus />
-            </button>
-            <span>{errors.toDo?.message}</span>
-          </form>
-        </InputWrap>
+
+        <CreateToDo />
+
         <ToDoWrap>
           {toDos.map((toDo) => (
-            <li key={toDo.id}>
-              <ToDoText>
-                {toDo.text}
-                <button>
-                  <FiMinusCircle />
-                </button>
-              </ToDoText>
-              <ToDoMenus>
-                <button>대기</button>
-                <button>진행</button>
-                <button>완료</button>
-              </ToDoMenus>
-            </li>
+            <ToDo key={toDo.id} {...toDo} />
           ))}
         </ToDoWrap>
       </Wrapper>
